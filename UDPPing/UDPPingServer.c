@@ -218,7 +218,7 @@ int main(int argc, char *argv[])
           }
           if (traceLevel >= 1)
           {
-            printf("%f,%d,%d,%d,%d,%d,%9.0f,%d",
+            printf("%f,%d,%d,%d,%d,%d,%9.0f,%d,",
                    wallTime, RxSeqNumber, lastSeqNumber,
                    numberMessages, outOfOrderArrivals, dropEstimate,
                    totalBytesRxed, numberIterations);
