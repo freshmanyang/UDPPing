@@ -1,0 +1,107 @@
+####################################3
+#
+#  Make.defines:   included in the Makefile
+#
+#  A common technique to deal with platform specific code is with code macros:
+#   #if defined(__linux__) 
+#  This relies on a set of predefined macros....used to be dangerous across different compilers
+#   but seems pretty standardized now. 
+#
+#  We use a BUILD symbol .... so use in code : 
+#    #ifdef LINUX ... ... #elif DARWIN ... #elif BSD ... #else UNIX   #endif
+#
+#  If ever need to specify a specific gcc version or 32 or 64 bit:
+#    export CC='gcc-4.4 -m32'
+#  If this causes compiler error of something like: sys/cdefs.h: No such file or directory
+#    install gcc-multilib and g++-multilib
+#
+#  To build a target in 32 bit mode, add -m32 to CFLAGS
+#
+#  This Make.defs  Exports to Makefile:
+#    OSFLAG LIBS GPSLIB LINKOPTIONS 
+#    OPTIONS  WARNING 
+#    CFLAGS CPLUSFLAGS  CLEANFILES
+#   As well as the CC, C, GCC, ... bindings
+
+#Select your environment
+#The more common technique is to have in source code :
+#   #if defined(__linux__) 
+#  Where this relies on a set of predefined macros....used to be dangerous across different compilers
+#   but seems pretty standardized now. 
+#   Instead, we use a BUILD symbol .... so use in code : 
+#    #ifdef LINUX ... ... #elif DARWIN ... #elif BSD ... #else UNIX   #endif
+#
+# if ever need to specify a specific gcc version or 32 or 64 bit:
+#    export CC='gcc-4.4 -m32'
+#  If this causes compiler error of something like: sys/cdefs.h: No such file or directory
+#    install gcc-multilib and g++-multilib
+#
+# To build a target in 32 bit mode, add -m32 to CFLAGS
+#
+# debugging makefiles
+#     make --just-print  or make -n   just lists what it will do
+#     make --print-data-base  or make -p    builds and lists lots of info     
+#     make --warn-undefined-variables 
+#      add compiler option -v to show the include files
+#      socket.h and socket_type.h located in 
+#        /usr/include/x86_64-linux-gnu/bits
+##########################################################
+
+UNAME := $(shell uname)
+isGPSD := $(which gpsd | wc -l) 
+CurTime := $(shell date)
+$(echo "$# $CurTime $UNAME $isGPSD ")
+
+ifeq ($(isGPSD), 1 )
+  GPSLIB = -lgps 
+  OPTIONS = -DGPSD 
+else
+  GPSLIB = 
+  OPTIONS = -DNOGPS 
+endif
+
+
+#Set compiler options and LIBS and LINKFLAGS specific to the platform
+ifeq ($(UNAME), Linux)
+  OSFLAG = -DLINUX
+  LIBS = -lm -lrt -lpthread
+  LINKOPTIONS = -o
+  WARNINGS = -Wall -Wno-unused-variable -Wno-unused-but-set-variable
+  #IFLAGS= -I/usr/include/linux
+else
+  ifeq ($(UNAME), Darwin)
+    OSFLAG = -DDARWIN
+    LIBS = -lm -lpthread
+    LINKOPTIONS = -o
+    WARNINGS = -Wall -Wno-unused-variable 
+    #IFLAGS= 
+  else
+    ifeq ($(UNAME), FreeBSD)
+      OSFLAG = -DBSD
+      LIBS = -lm -lrt -lpthread
+      LINKOPTIONS = -o
+      WARNINGS = -Wall -Wno-unused-variable -Wno-unused-but-set-variable
+      #IFLAGS= 
+    else
+      $(error ERROR BAD uname)
+    endif
+  endif
+endif
+
+OPTIONS += -DANSI 
+OPTIONS += -DNEWER_SYSTEM
+
+
+EXTRA_FLAGS =
+
+CFLAGS = -c $(EXTRA_FLAGS) -ggdb -O2 $(WARNINGS)  $(OSFLAG) $(IFLAGS)
+CPLUSFLAGS = -c -ggdb -O2 $(WARNINGS) $(OSFLAG) $(IFLAGS)
+CLEANFILES = core core.* *.core *.o temp.* *.out 
+
+CXX = g++
+CPLUS = g++
+CC = gcc
+C = gcc
+
+MD5 = md5sum *.c > checklist.txt
+
