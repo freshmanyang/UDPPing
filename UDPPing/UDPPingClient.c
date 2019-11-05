@@ -268,17 +268,14 @@ typedef struct {
   //delay = ((double)sendSize * (double)TxSize) * 8.0 / (sendRate);
   if (iterationDelay == 0)
   {
-    if (mode == 2)
-    {
-      delay = 0.2; // set minimum delay for mode 2
-    }
-    else
-    {
       delay = 0.0;
-    }
   }
   else
     delay = (double)iterationDelay / 1000000.0; //convert iterationDelay to units seconds
+
+  if (mode == 2 && delay < 0.2){
+    delay = 0.2; // set minimum delay for mode 2
+  }
 
   if (traceLevel > 0)
   {
