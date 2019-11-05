@@ -267,7 +267,16 @@ typedef struct {
   //If we were told a sendRate, this is how to find the delay
   //delay = ((double)sendSize * (double)TxSize) * 8.0 / (sendRate);
   if (iterationDelay == 0)
-    delay = 0.0;
+  {
+    if (mode == 2)
+    {
+      delay = 0.2; // set minimum delay for mode 2
+    }
+    else
+    {
+      delay = 0.0;
+    }
+  }
   else
     delay = (double)iterationDelay / 1000000.0; //convert iterationDelay to units seconds
 
@@ -352,7 +361,7 @@ typedef struct {
       if (runFlag == true)
       {
         FILE *fp = fopen("result.dat", "r");
-        int32_t a,b;
+        int32_t a, b;
         if (fp != NULL)
         {
           fscanf(fp, "%d", &a);
@@ -360,7 +369,7 @@ typedef struct {
           fscanf(fp, "%d", &b);
           header->SignalQuality = htonl(b);
           if (traceLevel == 2)
-            printf("%d %d\n", a,b);
+            printf("%d %d\n", a, b);
         }
         fclose(fp);
         //set the timeout for the send if modes 0,1
