@@ -1,0 +1,8 @@
+./UDPPingServer(Version:Version 1.30) pid:12758 Entered with 4 arguements, maxMsgSize:1000, service:6666, traceLevel:0
+::-6666
+
+Current time Mon Nov  4 19:51:29 2019
+, Duration of the test 320.308315 secs, mode 1, number of samples 6984, avg One way delay 0.766270, estimate of number lost 0,throughput 21803.992224, avg Quality Level -40.455613, avg RSSI 69.268184 
+1572915089.015046 339.894902    164380 0.0000 6984 6984 0 0 
+UDPEchoServer Results(1572915089.015046): duration:339.894902 avgRxRate:   164380 bps avgLossRate:0.0000 
+totalArrivals:6984, last RxSeqNumber:6984, outOfOrders:0, drops:0 
